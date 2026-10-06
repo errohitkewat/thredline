@@ -20,15 +20,21 @@ const Navbar = () => {
 
   // Logout handler 
   const handleLogout = async () => {
+    const isSure = (window.confirm("Are you sure you want to logout?"));
+
     try {
-      await logoutUser();
+      if (isSure) { 
+        await logoutUser();
+      }
     }
     catch (error) {
       console.log(error.message);
     }
     finally { 
-      dispatch(clearCredentials());
-      navigate("/login");
+      if (isSure) { 
+        dispatch(clearCredentials());
+        navigate("/login");
+      }
     }
   }
 

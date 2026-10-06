@@ -8,8 +8,9 @@ import App from "../App";
 import ProtectedRoutes from "../routes/ProtectedRoutes";
 import SellerRoutes from "../routes/SellerRoutes";
 import SellerDashboardPage from "../features/products/pages/SellerDashboardPage";
-import MainLAyout from "./layout/MainLayout";
+import MainLayout from "../app/layout/MainLayout";
 import ProductDetailPage from "../features/products/pages/ProductDetailPage";
+import ProductFormPage from "../features/products/pages/ProductFormPage";
 
 
 const router = createBrowserRouter([
@@ -17,7 +18,7 @@ const router = createBrowserRouter([
         element: <App />,
         children: [
             {
-                element: <MainLAyout />,
+                element: <MainLayout />,
                 children: [
                     {
                         path: "/",
@@ -37,6 +38,10 @@ const router = createBrowserRouter([
                                         path: "/seller",
                                         element: <SellerDashboardPage />
                                     },
+                                    {
+                                        path: "/seller/products/new",
+                                        element: <ProductFormPage />
+                                    }
                                 ]
                             },
                         ]

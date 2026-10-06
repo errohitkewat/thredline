@@ -13,3 +13,32 @@ export const getProductById = async (id) => {
 
     return response.data;
 }
+
+
+
+export const getSellerProducts = async () => { 
+    const response = await axiosInstance.get(`/products/seller`);
+    return response.data;
+}
+
+
+
+
+export const publishProductById = async (id) => { 
+    const response = await axiosInstance.patch(`/products/list/${id}`);
+    return response.data;
+}
+
+
+export const unPublishProductById = async (id) => { 
+    const response = await axiosInstance.patch(`/products/unlist/${id}`);
+    return response.data;
+}
+
+
+export const deleteProductById = async (id) => { 
+    const response = await axiosInstance.delete(`/products/${id}`);
+    return response.data;
+}
+
+
