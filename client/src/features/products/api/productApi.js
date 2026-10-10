@@ -50,3 +50,10 @@ export const createProduct = async (formData) => {
 }
 
 
+
+
+
+export const updateProduct = async (id, formData) => { 
+    const response = await axiosInstance.put(`/products/${id}`, formData);
+    return response.data;
+}

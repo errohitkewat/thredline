@@ -47,7 +47,7 @@ const Navbar = () => {
 
         {/* Brand */}
         <Link to="/" className="text-lg font-bold tracking-[0.3em]">
-          YOUR BRAND
+        THREADLINE
         </Link>
 
         {/* Desktop links */}

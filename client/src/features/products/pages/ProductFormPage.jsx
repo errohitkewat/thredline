@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { useForm } from "react-hook-form";
-import { Link, useNavigate } from "react-router";
-import { createProduct } from "../api/productApi";
+import { Link, useNavigate, useParams } from "react-router";
+import { createProduct, getProductById, updateProduct } from "../api/productApi";
 
 const ALL_SIZES = ["XS", "S", "M", "L", "XL", "XXL"];
 
@@ -11,14 +11,57 @@ const labelClass = "text-xs font-medium uppercase tracking-widest";
 
 const ProductFormPage = () => {
 
-  const { register, handleSubmit, formState: { errors, isSubmitting }, watch } = useForm();
+  const { register, handleSubmit, formState: { errors, isSubmitting }, watch, reset } = useForm();
 
   const [images, setImages] = useState([]);
   const [imageError, setImageError] = useState("");
   const [serverError, setServerError] = useState("");
 
-
   const navigate = useNavigate();
+
+
+  const { id } = useParams();
+  const isEdit = Boolean(id);
+
+  const [loadingProduct, setLoadingProduct] = useState(isEdit);
+  const [existingImages, setExistingImages] = useState([]);
+
+
+  useEffect(() => {
+    if (!isEdit) return;
+
+    const fetchProduct = async () => { 
+      try {
+        const response = await getProductById(id);
+        const product = response.data.product;
+
+        const sizes = {};
+        ALL_SIZES.forEach((size) => {
+          const found = product.sizes.find(s => s.size === size)
+          sizes[size] = found ? { checked: true, stock: found.stock } : { checked: false, stock: "" };
+        })
+
+        reset({
+          title: product.title,
+          description: product.description,
+          amount: product.price.amount,
+          currency: product.price.currency,
+          sizes,
+        })
+
+        setExistingImages(product.images);
+      }
+      catch (error) {
+        setServerError(error.response?.data?.message || "Something went wrong");
+      }
+      finally { 
+        setLoadingProduct(false);
+      }
+    }
+    fetchProduct();
+  }, [id, isEdit, reset]);
+
+
 
   const previews = useMemo(() => images.map(file => URL.createObjectURL(file)), [images]);
 
@@ -34,7 +77,7 @@ const ProductFormPage = () => {
         setImageError("Each image must be smaller than 2 MB");
         return;
     }
-    if (images.length + picked.length > 7) { 
+    if (existingImages.length + images.length + picked.length > 7) { 
         setImageError("You can add only 7 images");
         return;
     }
@@ -43,11 +86,19 @@ const ProductFormPage = () => {
   }
 
 
+if (loadingProduct) {
+  return <p className="px-6 py-10 text-sm text-neutral-500">Loading product...</p>;
+}
+
 
   const removeImage = (index) => { 
     setImages(images.filter((_, i) => i !== index));
   }
 
+
+  const removeExistingImage = (fileId) => { 
+    setExistingImages(existingImages.filter(file => file.fileId !== fileId));
+  }
 
 
   const onSubmit = async (data) => {
@@ -58,7 +109,7 @@ const ProductFormPage = () => {
         alert("Select at least one size");
         return;
     }
-    if (images.length === 0) { 
+    if ( existingImages.length + images.length === 0) { 
       setImageError("Select at least one image");
       return;
     }
@@ -73,11 +124,15 @@ const ProductFormPage = () => {
     }))
     formData.append("sizes", JSON.stringify(selectedSizes));
 
+
     images.forEach(file => formData.append("images", file));
 
+    if (isEdit) { 
+      formData.append("existingImageIds", JSON.stringify(existingImages.map(file => file.fileId)));
+    }
+
     try {
-      const response = await createProduct(formData);
-      console.log(response);
+      isEdit ? await updateProduct(id, formData) :  await createProduct(formData);
       navigate("/seller");
     } catch (error) {
       console.log(error.message);
@@ -98,7 +153,9 @@ const ProductFormPage = () => {
             &larr; Back to dashboard
           </Link>
           <h1 className="mt-4 text-xl font-semibold uppercase tracking-[0.25em] sm:text-2xl">
-            Add Product
+            { 
+              isEdit ? "Edit Product" : "Add Product"
+            }
           </h1>
         </div>
 
@@ -252,13 +309,30 @@ const ProductFormPage = () => {
 
           {/* Images */}
           <div>
-            <p className={labelClass}>Images ({images.length}/7)</p>
+            <p className={labelClass}>Images ({existingImages.length + images.length}/7)</p>
             <p className="mt-1.5 text-xs text-neutral-400">
               Up to 7 images, max 2MB each
             </p>
 
             {/* PREVIEWS: logic ke time yahan chuni hui images dikhayenge */}
             <div className="mt-3 flex flex-wrap gap-3">
+              {existingImages.map((img) => (
+                <div key={img.fileId} className="relative">
+                  <img
+                    src={img.url}
+                    alt=""
+                    className="h-24 w-20 border border-neutral-200 object-cover"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => removeExistingImage(img.fileId)}
+                    className="absolute -right-2 -top-2 h-5 w-5 bg-black text-xs leading-5 text-white"
+                  >
+                    &times;
+                  </button>
+                </div>
+              ))}
+
               {previews.map((url, index) => (
                 <div key={url} className="relative">
                   <img
@@ -296,7 +370,7 @@ const ProductFormPage = () => {
               type="submit"
               className="flex-1 bg-black py-3.5 text-xs font-semibold uppercase tracking-[0.25em] text-white transition hover:bg-neutral-800 disabled:cursor-not-allowed disabled:opacity-50"
             >
-              { isSubmitting ? "Creating..." : "Create product" }
+              {isSubmitting ? (isEdit ? "Saving..." : "Creating...") : (isEdit ? "Save changes" : "Create product")}
             </button>
 
             <Link

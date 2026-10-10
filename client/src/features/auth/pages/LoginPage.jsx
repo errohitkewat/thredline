@@ -33,7 +33,7 @@ const LoginPage = () => {
         <div className="grid min-h-screen bg-white text-black lg:grid-cols-2">
             {/* LEFT: brand panel (sirf bade screen par dikhega) */}
             <div className="hidden flex-col justify-between bg-black p-12 text-white lg:flex">
-                <h1 className="text-2xl font-bold tracking-[0.3em]">YOUR BRAND</h1>
+                <h1 className="text-2xl font-bold tracking-[0.3em]">THREADLINE</h1>
         
                 <div>
                     <p className="text-4xl font-light leading-tight tracking-wide">
@@ -45,7 +45,7 @@ const LoginPage = () => {
                 </div>
         
                 <p className="text-xs tracking-widest text-neutral-500">
-                    © 2026 YOUR BRAND
+                    © 2026 THREADLINE
                 </p>
             </div>
       
