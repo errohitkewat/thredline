@@ -8,4 +8,5 @@ export const config = {
     REFRESH_TOKEN_SECRET: process.env.REFRESH_TOKEN_SECRET,
     ACCESS_TOKEN_SECRET: process.env.ACCESS_TOKEN_SECRET,
     IMAGE_KIT_PRIVATE_KEY: process.env.IMAGE_KIT_PRIVATE_KEY,
+    NODE_ENV: process.env.NODE_ENV,
 }

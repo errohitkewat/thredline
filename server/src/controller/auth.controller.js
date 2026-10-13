@@ -1,6 +1,19 @@
 import bcrypt from "bcryptjs";
 import { UserModel } from "../models/auth.model.js"
 import { generateTokens, readRefreshToken } from "../utils/tokens.js";
+import { config } from "../config/config.js";
+
+
+
+
+
+const cookieOptions = {
+    httpOnly: true,
+    sameSite: "strict",
+    secure: config.NODE_ENV === "production",
+    maxAge: 7 * 24 * 60 * 60 * 1000,
+}
+
 
 
 
@@ -39,10 +52,7 @@ export const registerUserController = async (req, res) => {
         })
     
     
-        res.cookie("refreshToken", refreshToken, {
-            httpOnly: true,
-            sameSite: "strict",
-        })
+        res.cookie("refreshToken", refreshToken, cookieOptions);
     
     
         return res.status(201).json({
@@ -99,10 +109,7 @@ export const loginUserController = async (req, res) => {
         })
 
 
-        res.cookie("refreshToken", refreshToken, {
-            httpOnly: true,
-            sameSite: "strict",
-        })
+        res.cookie("refreshToken", refreshToken, cookieOptions);
 
 
         return res.status(201).json({
@@ -215,10 +222,7 @@ export const refreshTokensController = async (req, res) => {
             refreshToken: newRefreshToken,
         })
 
-        res.cookie("refreshToken", newRefreshToken, {
-            httpOnly: true,
-            sameSite: "strict",
-        })
+        res.cookie("refreshToken", newRefreshToken, cookieOptions)
 
 
         return res.status(200).json({
@@ -250,10 +254,7 @@ export const logOutUserController = async (req, res) => {
             })
         }
 
-        res.clearCookie("refreshToken", {
-            httpOnly: true,
-            sameSite: "strict"
-        })
+        res.clearCookie("refreshToken", cookieOptions);
 
 
         return res.status(200).json({

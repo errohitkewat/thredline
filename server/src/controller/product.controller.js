@@ -6,7 +6,6 @@ import mongoose from "mongoose";
 
 
 
-
 export const createProductController = async (req, res) => {
     let uploadedFiles = [];
 
