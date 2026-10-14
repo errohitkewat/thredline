@@ -2,7 +2,7 @@
 
 A full-stack e-commerce app for a clothing store, built with the MERN stack. Shoppers can browse products and sign up, while sellers get a dashboard to create, edit, publish, unlist and delete products with multi-image upload.
 
-**Live demo:** [threadline-three.vercel.app](https://threadline-three.vercel.app)
+**Live demo:** [threadline-three.vercel.app](https://thredline-three.vercel.app/)
 
 > Frontend is hosted on Vercel and the API on Railway. Both are served from the same domain, so the refresh-token cookie works without any CORS setup.
 
